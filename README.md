@@ -1,67 +1,55 @@
 # hw1
 
-Information on using this cookiecutter
+# House Price Classification Project
 
-Development workflows
-=======================
+This project is a binary classification task where we try to predict whether a house's price is greater than $1 million (denoted by 1) or not (denoted by 0), based on various features of the house.
 
-Create new project
-----------------------
+## Getting Started
 
-You've already done this if you are reading this file. You ran:
+The dataset used in this project is `kc_house_data_classification.csv` and `kc_house_data_regression.csv`.
 
-```bash
-cookiecutter gh:razlop/cookiecutter-datascience-simple
+## Tasks and Approach
+
+### Task 1 - Load Data
+We loaded our dataset using pandas' `read_csv` function.
+
+```python
+housing_df = pd.read_csv('kc_house_data_classification.csv')
 ```
 
-Put project under version control
----------------------------------
+### Task 2 - EDA
 
-Let's get version control set up. You don't absolutely have to do this, but you should. For the local repository, do;
+We performed Exploratory Data Analysis (EDA) on our dataset, primarily using the `describe` and `info` methods from pandas DataFrames to get a summary of the data.
 
-```bash
-git init
-git add .
-git commit -m "Initial commit"
+```python
+housing_df.describe()
+housing_df.info()
 ```
 
-For the remote repository, make a github repository named hw1, then do;
+### Task 3 - Preprocessing
 
-```bash
-git remote add origin git@github.com:razlop/hw1.git
-git branch -M main
-git push -u origin main
+In this step, we preprocessed the data, which involved splitting it into feature and target variables (X and y, respectively). We then further divided these into training and testing sets.
+
+```python
+from sklearn.model_selection import train_test_split
+
+X = housing_df.iloc[:, 0:18]
+y = housing_df.iloc[:, 18]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=73)
 ```
 
-Great. Using version control is good.
+### Task 4 - Logistic Regression Models
+
+In this task, we built several logistic regression models using different regularization techniques and hyperparameters, such as Ridge and Lasso regression with varying C values. The models were built using sklearn's `LogisticRegression` and `LogisticRegressionCV` classes, within a pipeline that included preprocessing steps.
+
+For each model, we computed accuracy scores for both the training and test data, and created confusion matrices.
+
+### Task 5 - Simple Decision Tree
+
+In this task, we fit a decision tree model to predict `price_gt_1M` using sklearn's `DecisionTreeClassifier`. We computed the accuracy score, created a confusion matrix for both train and test datasets, and discussed the performance relative to our logistic regression models.
 
 
-Folder structure
------------------
+### Task 6 - Error Exploration
 
-Here's the folder structure that gets created by `cookiecutter-datascience-simple`:
-
-	├── hw1	<- Your notebooks and scripts will live in the main project folder
-		│   .gitignore					<- Common file types for git to ignore
-		│   README.md					<- The top-level README for developers (you) using this project
-		│   template-nb.ipynb			<- A Jupyter notebook template
-		│
-		├───data						<- Final and intermediate data
-		│   └───raw						<- The original, immutable data dump
-		│
-		├───docs
-		│       notes.md				<- Simple markdown template for project notes
-		│
-		└───output
-				readme.md				<- Guidance for using this folder
-
-
-Documentation
---------------
-
-In this very simple project structure template, we've just included a markdown file with some typical
-section headings to use for project notes. Expand as desired. Later in the semester we will learn how to
-use Sphinx with restructuredText to write and generate documentation.
-
-
-
+In this task, we examined the errors made by Model 2 (the Lasso model with C=1.0) to gain more insights into its performance. We generated predictions from Model 2, identified where they differed from the actual target values, and created a histogram of the actual house prices for the test samples that were misclassified.
